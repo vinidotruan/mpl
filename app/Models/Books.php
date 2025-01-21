@@ -8,5 +8,5 @@ class Books extends Model
 {
     const COVERS_DIR = "covers";
     const BOOKS_DIR = "books";
-    protected $fillable = ["cover", "name"];
+    protected $fillable = ["cover", "name", "file"];
 }
