@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -64,10 +65,14 @@ class GithubService {
                 throw new ProcessFailedException($pushProcess);
             }
 
+            Log::info("Caiou aqui");
             return 1;
         } catch (ProcessFailedException $e) {
+            Log::info("Caiou aBqui");
             return $e->getMessage();
         } catch (Exception $e) {
+                        Log::info("Caiou aBCqui");
+
             return $e->getMessage();
         }
     }

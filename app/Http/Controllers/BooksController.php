@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Books\UploadBookRequest;
-use App\Http\Services\GithubService;
+use App\Services\GithubService;
 use App\Models\Books;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +33,10 @@ class BooksController extends Controller
             }
         }
 
-        $service->commit("Adding ".$request->get("name"));
+        $response = $service->commit("Adding ".$request->get("name"));
+        if ($response !== 1) {
+            return response()->json($response, 500);
+        }
 
         return response()->json(["data" => "created", "image" => $image]);
     }
