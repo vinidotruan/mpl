@@ -8,7 +8,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class GithubService {
-    public function commit(string $message)
+    public function checkout()
     {
         $repoPath = env('GIT_REPO_PATH');
         $branch = env('GIT_BRANCH');
@@ -47,6 +47,24 @@ class GithubService {
             if (!$pullProcess->isSuccessful()) {
                 throw new ProcessFailedException($pullProcess);
             }
+            return 1;
+
+        } catch (ProcessFailedException $e) {
+            Log::info("Caiou aBqui");
+            return $e->getMessage();
+        } catch (Exception $e) {
+                        Log::info("Caiou aBCqui");
+
+            return $e->getMessage();
+       }
+
+    }
+    public function commit(string $message)
+    {
+        $repoPath = env('GIT_REPO_PATH');
+        $branch = env('GIT_BRANCH');
+
+        try {
 
             $configName = new Process(['git', 'config', 'user.name', '"Vinícius Truan"']);
             $configName->setWorkingDirectory($repoPath);
