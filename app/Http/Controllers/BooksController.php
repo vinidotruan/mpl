@@ -12,10 +12,6 @@ class BooksController extends Controller
 {
     public function upload(UploadBookRequest $request, GithubService $service): JsonResponse
     {
-        $checkout = $service->checkout();
-        if($checkout !== 1) {
-            return response()->json($checkout, 500);
-        }
         if($request->hasFile("file")) {
             $file = $request->file("file");
             $name = $file->getClientOriginalName();
@@ -35,11 +31,6 @@ class BooksController extends Controller
                     "name" => $request->get("name"),
                 ]);
             }
-        }
-
-        $response = $service->commit("Adding ".$request->get("name"));
-        if ($response !== 1) {
-            return response()->json($response, 500);
         }
 
         return response()->json(["data" => "created", "image" => $image]);
