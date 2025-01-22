@@ -14,33 +14,48 @@ class GithubService {
         $branch = env('GIT_BRANCH');
 
         try {
-            $fetchProcess = new Process(['git', 'fetch']);
-            $fetchProcess->setWorkingDirectory($repoPath);
-            $fetchProcess->run();
+            /* $fetchProcess = new Process(['git', 'fetch']); */
+            /* $fetchProcess->setWorkingDirectory($repoPath); */
+            /* $fetchProcess->run(); */
+            /**/
+            /* if (!$fetchProcess->isSuccessful()) { */
+            /*     throw new ProcessFailedException($fetchProcess); */
+            /* } */
+            /**/
+            /* $checkBranchProcess = new Process(['git', 'branch', '-r', '--list', "origin/{$branch}"]); */
+            /* $checkBranchProcess->setWorkingDirectory($repoPath); */
+            /* $checkBranchProcess->run(); */
+            /**/
+            /* $branchExists = trim($checkBranchProcess->getOutput()) !== ''; */
+            /**/
+            /* if ($branchExists) { */
+            /*     $checkoutProcess = new Process(['git', 'checkout', $branch]); */
+            /* } else { */
+            /*     $checkoutProcess = new Process(['git', 'checkout', '-b', $branch, 'origin/main']); */
+            /* } */
+            /**/
+            /* $checkoutProcess->setWorkingDirectory($repoPath); */
+            /* $checkoutProcess->run(); */
+            /**/
+            /* if (!$checkoutProcess->isSuccessful()) { */
+            /*     throw new ProcessFailedException($checkoutProcess); */
+            /* } */
+            $configName = new Process(['git', 'config', 'user.name', '"Vinícius Truan"']);
+            $configName->setWorkingDirectory($repoPath);
+            $configName->run();
 
-            if (!$fetchProcess->isSuccessful()) {
-                throw new ProcessFailedException($fetchProcess);
+            if (!$configName->isSuccessful()) {
+                throw new ProcessFailedException($configName);
             }
 
-            $checkBranchProcess = new Process(['git', 'branch', '-r', '--list', "origin/{$branch}"]);
-            $checkBranchProcess->setWorkingDirectory($repoPath);
-            $checkBranchProcess->run();
+            // 2. Configurar o email do usuário
+            $configEmail = new Process(['git', 'config', 'user.email', '"contatoruanvinicius@gmail.com"']);
+            $configEmail->setWorkingDirectory($repoPath);
+            $configEmail->run();
 
-            $branchExists = trim($checkBranchProcess->getOutput()) !== '';
-
-            if ($branchExists) {
-                $checkoutProcess = new Process(['git', 'checkout', $branch]);
-            } else {
-                $checkoutProcess = new Process(['git', 'checkout', '-b', $branch, 'origin/main']);
+            if (!$configEmail->isSuccessful()) {
+                throw new ProcessFailedException($configEmail);
             }
-
-            $checkoutProcess->setWorkingDirectory($repoPath);
-            $checkoutProcess->run();
-
-            if (!$checkoutProcess->isSuccessful()) {
-                throw new ProcessFailedException($checkoutProcess);
-            }
-
             $addProccess = new Process(['git', 'add', '.']);
             $addProccess->setWorkingDirectory($repoPath);
             $addProccess->run();
