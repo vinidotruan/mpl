@@ -13,6 +13,33 @@ class GithubService {
         $branch = env('GIT_BRANCH');
 
         try {
+            $fetchProcess = new Process(['git', 'fetch']);
+            $fetchProcess->setWorkingDirectory($repoPath);
+            $fetchProcess->run();
+
+            if (!$fetchProcess->isSuccessful()) {
+                throw new ProcessFailedException($fetchProcess);
+            }
+
+            $checkBranchProcess = new Process(['git', 'branch', '-r', '--list', "origin/{$branch}"]);
+            $checkBranchProcess->setWorkingDirectory($repoPath);
+            $checkBranchProcess->run();
+
+            $branchExists = trim($checkBranchProcess->getOutput()) !== '';
+
+            if ($branchExists) {
+                $checkoutProcess = new Process(['git', 'checkout', $branch]);
+            } else {
+                $checkoutProcess = new Process(['git', 'checkout', '-b', $branch, 'origin/main']);
+            }
+
+            $checkoutProcess->setWorkingDirectory($repoPath);
+            $checkoutProcess->run();
+
+            if (!$checkoutProcess->isSuccessful()) {
+                throw new ProcessFailedException($checkoutProcess);
+            }
+
             $addProccess = new Process(['git', 'add', '.']);
             $addProccess->setWorkingDirectory($repoPath);
             $addProccess->run();
