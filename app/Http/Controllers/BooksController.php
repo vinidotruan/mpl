@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class BooksController extends Controller
 {
-    public function upload(UploadBookRequest $request, GithubService $service): JsonResponse
+    public function upload(UploadBookRequest $request): JsonResponse
     {
         if($request->hasFile("file")) {
             $file = $request->file("file");
