@@ -14,32 +14,40 @@ class GithubService {
         $branch = env('GIT_BRANCH');
 
         try {
-            /* $fetchProcess = new Process(['git', 'fetch']); */
-            /* $fetchProcess->setWorkingDirectory($repoPath); */
-            /* $fetchProcess->run(); */
-            /**/
-            /* if (!$fetchProcess->isSuccessful()) { */
-            /*     throw new ProcessFailedException($fetchProcess); */
-            /* } */
-            /**/
-            /* $checkBranchProcess = new Process(['git', 'branch', '-r', '--list', "origin/{$branch}"]); */
-            /* $checkBranchProcess->setWorkingDirectory($repoPath); */
-            /* $checkBranchProcess->run(); */
-            /**/
-            /* $branchExists = trim($checkBranchProcess->getOutput()) !== ''; */
-            /**/
-            /* if ($branchExists) { */
-            /*     $checkoutProcess = new Process(['git', 'checkout', $branch]); */
-            /* } else { */
-            /*     $checkoutProcess = new Process(['git', 'checkout', '-b', $branch, 'origin/main']); */
-            /* } */
-            /**/
-            /* $checkoutProcess->setWorkingDirectory($repoPath); */
-            /* $checkoutProcess->run(); */
-            /**/
-            /* if (!$checkoutProcess->isSuccessful()) { */
-            /*     throw new ProcessFailedException($checkoutProcess); */
-            /* } */
+            $fetchProcess = new Process(['git', 'fetch']);
+            $fetchProcess->setWorkingDirectory($repoPath);
+            $fetchProcess->run();
+
+            if (!$fetchProcess->isSuccessful()) {
+                throw new ProcessFailedException($fetchProcess);
+            }
+
+            // 2. Checkout para a branch de destino
+            $checkoutProcess = new Process(['git', 'checkout', $branch]);
+            $checkoutProcess->setWorkingDirectory($repoPath);
+            $checkoutProcess->run();
+
+            if (!$checkoutProcess->isSuccessful()) {
+
+                throw new ProcessFailedException($checkoutProcess);
+                $checkoutProcess = new Process(['git', 'checkout', '-b', $branch, "origin/{$branch}"]);
+                $checkoutProcess->setWorkingDirectory($repoPath);
+                $checkoutProcess->run();
+
+                if (!$checkoutProcess->isSuccessful()) {
+                    throw new ProcessFailedException($checkoutProcess);
+                }
+            }
+
+
+            $pullProcess = new Process(['git', 'pull', '--rebase', '-X', 'theirs', 'origin', $branch]);
+            $pullProcess->setWorkingDirectory($repoPath);
+            $pullProcess->run();
+
+            if (!$pullProcess->isSuccessful()) {
+                throw new ProcessFailedException($pullProcess);
+            }
+
             $configName = new Process(['git', 'config', 'user.name', '"Vinícius Truan"']);
             $configName->setWorkingDirectory($repoPath);
             $configName->run();
