@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Books\UploadBookRequest;
+use App\Http\Services\GithubService;
 use App\Models\Books;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class BooksController extends Controller
 {
-    public function upload(UploadBookRequest $request): JsonResponse
+    public function upload(UploadBookRequest $request, GithubService $service): JsonResponse
     {
         if($request->hasFile("file")) {
             $file = $request->file("file");
@@ -31,6 +32,8 @@ class BooksController extends Controller
                 ]);
             }
         }
+
+        $service->commit("Adding ".$request->get("name"));
 
         return response()->json(["data" => "created", "image" => $image]);
     }

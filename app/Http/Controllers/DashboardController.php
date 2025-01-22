@@ -14,6 +14,10 @@ class DashboardController extends Controller
         if(!Auth::user()) {
             return redirect('/auth/redirect');
         }
-        return view("dashboard", ["books" => Books::all()]);
+        return view("dashboard", [
+            "books" => Books::all(),
+            "image" => Auth::user()->github_pfp,
+            "userName" => Auth::user()->name
+        ]);
     }
 }

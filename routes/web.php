@@ -17,10 +17,13 @@ Route::get('/auth/callback', function () {
     ], [
         'name' => $user->name,
         'github_token' => $user->token,
-        'github_refresh_token' => $user->refreshToken
+        'github_refresh_token' => $user->refreshToken,
+        'github_pfp' => $user->avatar,
     ]);
 
     Auth::login($user, false);
     return redirect('/');
 });
 Route::get('/', [DashboardController::class, 'index']);
+Route::get('/repo-settings', [DashboardController::class, 'repoSettings']);
+
