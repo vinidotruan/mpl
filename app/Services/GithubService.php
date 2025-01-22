@@ -22,14 +22,13 @@ class GithubService {
                 throw new ProcessFailedException($fetchProcess);
             }
 
-            // 2. Checkout para a branch de destino
             $checkoutProcess = new Process(['git', 'checkout', $branch]);
             $checkoutProcess->setWorkingDirectory($repoPath);
             $checkoutProcess->run();
 
             if (!$checkoutProcess->isSuccessful()) {
-
                 throw new ProcessFailedException($checkoutProcess);
+
                 $checkoutProcess = new Process(['git', 'checkout', '-b', $branch, "origin/{$branch}"]);
                 $checkoutProcess->setWorkingDirectory($repoPath);
                 $checkoutProcess->run();
@@ -39,7 +38,6 @@ class GithubService {
                 }
             }
 
-
             $pullProcess = new Process(['git', 'pull', '--rebase', '-X', 'theirs', 'origin', $branch]);
             $pullProcess->setWorkingDirectory($repoPath);
             $pullProcess->run();
@@ -47,14 +45,14 @@ class GithubService {
             if (!$pullProcess->isSuccessful()) {
                 throw new ProcessFailedException($pullProcess);
             }
+            Log::info("Checkout auqi");
             return 1;
 
         } catch (ProcessFailedException $e) {
-            Log::info("Caiou aBqui");
+            Log::info("Caiou Cqui");
             return $e->getMessage();
         } catch (Exception $e) {
-                        Log::info("Caiou aBCqui");
-
+            Log::info("Caiou aBCquiaaa");
             return $e->getMessage();
        }
 
