@@ -2,20 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Books\UploadBookRequest;
 use App\Models\Books;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
 
 class BooksController extends Controller
 {
-    public function store(Request $request): View
-    {
-        $book = Books::create($request->all());
-        return view("welcome");
-    }
-
-    public function upload(Request $request)
+    public function upload(UploadBookRequest $request): JsonResponse
     {
         if($request->hasFile("file")) {
             $file = $request->file("file");
@@ -36,8 +30,6 @@ class BooksController extends Controller
                     "name" => $request->get("name"),
                 ]);
             }
-        } else {
-            return response()->json(["data" => "cara deu merda aqui"]);
         }
 
         return response()->json(["data" => "created", "image" => $image]);

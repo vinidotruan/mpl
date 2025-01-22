@@ -27,8 +27,11 @@ function uploadFile(files) {
             data.append("file", file);
             data.append("name", name);
             axios.post("/api/books/upload", data)
-                .then(response => {
+                .then(_ => {
                     window.location.reload()
+                })
+                .catch(({response}) => {
+                    console.log(response.data.message)
                 });
           }
         });
