@@ -3,21 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Books;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Title;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function index(): View | RedirectResponse
+    public function index(): Response {
+        return Inertia::render("Dashboard", ["titles" => Title::all(), "books" => Books::with("title")->get()]);
+    }
+
+    public function filteredBooks(Request $request, Title $title): Response {
+        $books = $title->books()->with("title")->get();
+        return Inertia::render("Dashboard", ["titles" => Title::all(), "books" => $books ]);
+    }
+
+    public function titles(): JsonResponse
     {
-        if(!Auth::user()) {
-            return redirect('/auth/redirect');
-        }
-        return view("dashboard", [
-            "books" => Books::all(),
-            "image" => Auth::user()->github_pfp,
-            "userName" => Auth::user()->name
-        ]);
+        return response()->json(Title::all());
     }
 }

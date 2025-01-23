@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Books\UploadBookRequest;
 use App\Models\Books;
+use App\Models\Title;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,6 +12,10 @@ class BooksController extends Controller
 {
     public function upload(UploadBookRequest $request): JsonResponse
     {
+        if($request->get('password') !== env("UPLOAD_PASSWORD")) {
+            return response()->json(['data' => '😉', "a" => $request->get('uploadPassword'), "b" => env("UPLOAD_PASSWORD")], 403);
+        }
+
         if($request->hasFile("file")) {
             $file = $request->file("file");
             $name = $file->getClientOriginalName();
@@ -23,15 +28,22 @@ class BooksController extends Controller
             }
             $image = $pdf->saveImage(Storage::path(Books::COVERS_DIR."/".$nameCover));
 
-            if($bookFile) {
-                Books::create([
-                    "file" => $name,
-                    "cover" => $nameCover,
-                    "name" => $request->get("name"),
-                ]);
+            $titleData = $request->get('title');
+            $title = Title::where("id", $titleData)->orWhere("name", $titleData)->first();
+            if(!$title) {
+                $title = Title::create([ "name" => $titleData ])->id;
+            } else {
+                $title = $title->id;
             }
+
+            $book = Books::create([
+                "file" => $name,
+                "cover" => $nameCover,
+                "name" => $request->get("name"),
+                "title_id" => $title
+            ]);
         }
 
-        return response()->json(["data" => "created", "image" => $image]);
+        return response()->json(["data" => ["book" => $book->load('title')]]);
     }
 }
