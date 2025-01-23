@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("file");
             $table->string("cover");
             $table->string("name");
+            $table->foreignId("title_id")->constrained("titles");
             $table->timestamps();
         });
     }

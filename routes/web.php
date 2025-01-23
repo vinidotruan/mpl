@@ -1,29 +1,21 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
-
-Route::get('/auth/redirect', function() {
-    return Socialite::driver('github')->scopes(['read:user', 'public_repo'])->redirect();
-})->name('login');
-
-Route::get('/auth/callback', function () {
-    $user = Socialite::driver('github')->user();
-    $user = User::updateOrCreate([
-        'github_id' => $user->id
-    ], [
-        'name' => $user->name,
-        'github_token' => $user->token,
-        'github_refresh_token' => $user->refreshToken,
-        'github_pfp' => $user->avatar,
-    ]);
-
-    Auth::login($user, false);
-    return redirect('/');
-});
+use Inertia\Inertia;
 Route::get('/', [DashboardController::class, 'index']);
-Route::get('/repo-settings', [DashboardController::class, 'repoSettings']);
+/* Route::get('/', function () { */
+/*     return Inertia::render('Welcome', [ */
+/*         'canLogin' => Route::has('login'), */
+/*         'canRegister' => Route::has('register'), */
+/*         'laravelVersion' => Application::VERSION, */
+/*         'phpVersion' => PHP_VERSION, */
+/*     ]); */
+/* }); */
 
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+require __DIR__.'/auth.php';

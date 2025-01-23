@@ -20,31 +20,11 @@
 
 <body ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
     <x-navbar :image="$image" :name="$userName"/>
+    <x-loader />
     <div class="container">
         @yield('content')
     </div>
-    <div class="modal fade" id="nameModal" tabindex="-1" aria-labelledby="nameModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="nameModalLabel">New Book</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Name:</label>
-                            <input type="text" class="form-control" id="name">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="upload">Upload</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-store-book-modal />
 </body>
 
 </html>

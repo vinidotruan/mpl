@@ -10,15 +10,22 @@ window.dropHandler = function (ev) {
 
 function openModal(files) {
     const myModal = new Modal(document.getElementById('nameModal'))
-    myModal.show()
+    myModal.show();
     const button = document.getElementById("upload");
     button.onclick = function() {
-        uploadFile(files)
+        myModal.toggle();
+        uploadFile(files);
     }
+}
+
+function showLoader() {
+    const loader = new Modal(document.getElementById('loaderModal'))
+    loader.toggle();
 }
 
 function uploadFile(files) {
     const name = document.getElementById("name").value;
+    // showLoader()
     if (files) {
         [...files].forEach((item, _) => {
           if (item.kind === "file") {
